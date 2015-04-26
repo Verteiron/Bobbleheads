@@ -8,43 +8,63 @@ Import Game
 
 ;=== Properties ===--
 
-Actor Property PlayerRef Auto
+Actor 	Property PlayerRef 							Auto
 
-Bool Property Ready = False Auto
+Quest 	Property vBOB_ActorPollingQuest 			Auto
+Quest 	Property vBOB_ApplyBobbleheadSpellQuest 	Auto
 
-Float Property ModVersion Auto Hidden
-Int Property ModVersionInt Auto Hidden
+Message Property vBOB_ModLoadedMSG 					Auto
+Message Property vBOB_ModUpdatedMSG 				Auto
+Message Property vBOB_ModShutdownMSG 				Auto
 
-Int Property ModVersionMajor Auto Hidden
-Int Property ModVersionMinor Auto Hidden
-Int Property ModVersionPatch Auto Hidden
 
-String Property ModName = "Bobblehead" Auto Hidden
+Bool 	Property Ready 				= False			Auto Hidden
+Float 	Property ModVersion 						Auto Hidden
+Int 	Property ModVersionInt 						Auto Hidden
 
-;=== Properties ===--
+Int 	Property ModVersionMajor 					Auto Hidden
+Int 	Property ModVersionMinor 					Auto Hidden
+Int 	Property ModVersionPatch 					Auto Hidden
 
-Quest Property vBOB_ActorPollingQuest Auto
-
-;Message Property vMYC_ModLoadedMSG Auto
-;Message Property vMYC_ModUpdatedMSG Auto
-;Message Property vMYC_ModShutdownMSG Auto
+String 	Property ModName 			= "Bobblehead"	Auto Hidden
 
 ;=== Config variables ===--
 
 ;=== Variables ===--
 
+;=== Events ===--
+
 Event OnInit()
 	;If IsRunning()
-		RegisterForSingleUpdate(5)
+		RegisterForSingleUpdate(1)
 	;EndIf
 EndEvent
 
 Event OnUpdate()
-	;While vBOB_ApplyBobbleheadSpell.IsRunning()
-	;	vBOB_ApplyBobbleheadSpell.Stop()
-	;	Wait(0.1)
-	;EndWhile
+	DoStartup()
+EndEvent
+
+Function DoStartup()
+	Debug.Trace("vBOB/MetaQuest: Starting up!")
 	If !vBOB_ActorPollingQuest.IsRunning()
+		Debug.Trace("vBOB/MetaQuest: Starting vBOB_ActorPollingQuest!")
 		vBOB_ActorPollingQuest.Start()
 	EndIf
-EndEvent
+EndFunction
+
+Function DoUpkeep(Bool abBackground = True)
+	
+EndFunction
+
+Function DoShutdown()
+	Debug.Trace("vBOB/MetaQuest: Shutting down!")
+	If vBOB_ActorPollingQuest.IsRunning()
+		Debug.Trace("vBOB/MetaQuest: Stopping vBOB_ActorPollingQuest!")
+		vBOB_ActorPollingQuest.Stop()
+	EndIf
+	If vBOB_ApplyBobbleheadSpellQuest.IsRunning()
+		Debug.Trace("vBOB/MetaQuest: Stopping vBOB_ApplyBobbleheadSpellQuest!")
+		vBOB_ApplyBobbleheadSpellQuest.Stop()
+	EndIf
+
+EndFunction

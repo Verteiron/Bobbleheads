@@ -8,31 +8,21 @@ Import Game
 
 ;=== Properties ===--
 
-Actor Property PlayerRef Auto
+Actor 			Property PlayerRef 						Auto
 
-Bool Property Ready = False Auto
-
-Float Property ModVersion Auto Hidden
-Int Property ModVersionInt Auto Hidden
-
-Int Property ModVersionMajor Auto Hidden
-Int Property ModVersionMinor Auto Hidden
-Int Property ModVersionPatch Auto Hidden
-
-String Property ModName = "Bobblehead" Auto Hidden
-
-Quest Property vBOB_ApplyBobbleheadSpellQuest Auto
-
-;Message Property vMYC_ModLoadedMSG Auto
-;Message Property vMYC_ModUpdatedMSG Auto
-;Message Property vMYC_ModShutdownMSG Auto
+Quest 			Property vBOB_ApplyBobbleheadSpellQuest Auto
 
 ;=== Config variables ===--
 
+GlobalVariable 	Property vBOB_MasterEnable				Auto
+
 ;=== Variables ===--
+
+;=== Events ===--
 
 Event OnInit()
 	;If IsRunning()
+		Debug.Trace("vBOB/ActorPollingScript: Starting up!")
 		vBOB_ApplyBobbleheadSpellQuest.Start()
 		RegisterForSingleUpdate(5)
 	;EndIf
@@ -43,14 +33,22 @@ Event OnUpdate()
 	;	vBOB_ApplyBobbleheadSpellQuest.Stop()
 	;	Wait(0.1)
 	;EndWhile
+	Debug.Trace("vBOB/ActorPollingScript: Checking for new targets...")
+	If !vBOB_MasterEnable.GetValue()
+		Debug.Trace("vBOB/ActorPollingScript: MasterEnable is off, shutting down!")
+		vBOB_ApplyBobbleheadSpellQuest.Stop()
+		Stop()
+		Return
+	EndIf
+
 	vBOB_ApplyBobbleheadSpellQuest.Stop()
 	vBOB_ApplyBobbleheadSpellQuest.Start()
-	Wait(0.33)
+	Wait(0.5)
 
 	While vBOB_ApplyBobbleheadSpellQuest.IsRunning()   ; .GetAliasByName("BobbleTarget")
 		vBOB_ApplyBobbleheadSpellQuest.Stop()
 		vBOB_ApplyBobbleheadSpellQuest.Start()
-		Wait(0.33)
+		Wait(0.5)
 	EndWhile
 	RegisterForSingleUpdate(5)
 EndEvent

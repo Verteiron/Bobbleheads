@@ -10,12 +10,15 @@ Import Utility
 
 ;=== Properties ===--
 
+Form 			Property rigidBodyDummy 		Auto
+
 Actor 			Property PlayerREF				Auto
 
 GlobalVariable 	Property vBOB_HeadScaleMult 	Auto
 GlobalVariable 	Property vBOB_HeadScaleMax	 	Auto
 GlobalVariable 	Property vBOB_DeflateOnDeath 	Auto
 GlobalVariable 	Property vBOB_UseSmoothScaling 	Auto
+GlobalVariable 	Property vBOB_MasterEnable		Auto
 
 Spell 			Property vBOB_BobbleFXSpell		Auto
 
@@ -35,6 +38,8 @@ Int 			Property ActorSex 				Auto Hidden
 Actor 			Property TargetActor 			Auto Hidden
 
 String 			Property HeadNode 				Auto Hidden
+
+Bool 			Property LostMyHead				Auto Hidden
 
 ;=== Events ===--
 
@@ -57,6 +62,7 @@ Event OnEffectStart(Actor akTarget, Actor akCaster)
 		UseNiOverride = True
 	EndIf
 	ActorSex = TargetActor.GetActorBase().GetSex()
+	RegisterForAnimationEvent(akTarget, "Decapitate")
 	RegisterForSingleUpdate(1)
 EndEvent
 
@@ -70,6 +76,12 @@ EndEvent
 
 Event OnAttachedToCell()
 	RegisterForSingleUpdate(1)
+EndEvent
+
+Event OnAnimationEvent(ObjectReference akSource, string asEventName)
+	If asEventName == "Decapitate"
+		LostMyHead = True
+	EndIf
 EndEvent
 
 State Rescaled
@@ -114,7 +126,18 @@ Event OnDying(Actor akKiller)
 	EndIf
 EndEvent
 
+Event OnDeath(Actor akKiller)
+	If vBOB_DeflateOnDeath.GetValue()
+		GoToState("Shutdown")
+		TargetActor.RemoveSpell(vBOB_BobbleFXSpell)	
+	EndIf
+EndEvent
+
 Event OnUpdate()
+	If !vBOB_MasterEnable.GetValue()
+		GoToState("Shutdown")
+		TargetActor.RemoveSpell(vBOB_BobbleFXSpell)	
+	EndIf
 	If TargetActor.IsDead() && vBOB_DeflateOnDeath.GetValue()
 		OnDeath(None)
 		Return
@@ -131,7 +154,7 @@ Event OnUpdate()
 	If TargetActor.Is3DLoaded()
 		RegisterForSingleUpdate(5)
 	Else
-		RegisterForSingleUpdate(30)
+		RegisterForSingleUpdate(10)
 	EndIf
 EndEvent
 
@@ -210,6 +233,9 @@ Function DoRescaling(Float afTargetScale)
 
 	Float fVolume = 1.0
 	Int iNumSteps = (Math.Abs(fHeadScaleDelta) * 30) as Int
+	If LostMyHead
+		iNumSteps = 100
+	EndIf
 	If iNumSteps < 30
 		iNumSteps = 30
 	ElseIf iNumSteps > 100
@@ -236,7 +262,6 @@ Function DoRescaling(Float afTargetScale)
 				;Debug.Trace("vBOB/" + TargetActor.GetActorBase().GetName() + ": Setting volume to " + fVolume)
 				Sound.SetInstanceVolume(iSoundID, fVolume)
 			EndIf
-			;Debug.Trace("vBOB: Setting head node to " + fHeadNodeScale)
 			iStep += 1
 		EndWhile
 		If iSoundID
@@ -363,6 +388,14 @@ State Shutdown
 	EndEvent
 
 	Event OnDetachedFromCell()
+		
+	EndEvent
+
+	Event OnDeath(Actor akKiller)
+		
+	EndEvent
+
+	Event OnDying(Actor akKiller)
 		
 	EndEvent
 EndState
