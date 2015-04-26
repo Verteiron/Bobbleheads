@@ -12,7 +12,10 @@ Import Utility
 
 Actor 			Property PlayerREF				Auto
 
-GlobalVariable 	Property vBOB_MaxHeadSize 		Auto
+GlobalVariable 	Property vBOB_HeadScaleMult 	Auto
+GlobalVariable 	Property vBOB_HeadScaleMax	 	Auto
+GlobalVariable 	Property vBOB_DeflateOnDeath 	Auto
+GlobalVariable 	Property vBOB_UseSmoothScaling 	Auto
 
 Spell 			Property vBOB_BobbleFXSpell		Auto
 
@@ -41,8 +44,8 @@ Event OnEffectStart(Actor akTarget, Actor akCaster)
 	If !HeadNode
 		Return
 	EndIf
-	If vBOB_MaxHeadSize
-		MaxHeadSize = vBOB_MaxHeadSize.GetValue()
+	If vBOB_HeadScaleMult
+		MaxHeadSize = vBOB_HeadScaleMult.GetValue()
 	EndIf 
 	OriginalHeadScale 	= NetImmerse.GetNodeScale(ref = akTarget, node = HeadNode, firstPerson = False)
 	OriginalRootScale 	= NetImmerse.GetNodeScale(ref = akTarget, node = "NPC COM [COM ]", firstPerson = False)
@@ -104,10 +107,21 @@ Event OnUnload()
 	TargetActor.RemoveSpell(vBOB_BobbleFXSpell)	
 EndEvent
 
+Event OnDying(Actor akKiller)
+	If vBOB_DeflateOnDeath.GetValue()
+		GoToState("Shutdown")
+		TargetActor.RemoveSpell(vBOB_BobbleFXSpell)	
+	EndIf
+EndEvent
+
 Event OnUpdate()
-	If vBOB_MaxHeadSize
-		If vBOB_MaxHeadSize.GetValue() != MaxHeadSize || MaxHeadSize * OriginalHeadScale != NetImmerse.GetNodeScale(ref = TargetActor, node = HeadNode, firstPerson = False)
-			MaxHeadSize = vBOB_MaxHeadSize.GetValue()
+	If TargetActor.IsDead() && vBOB_DeflateOnDeath.GetValue()
+		OnDeath(None)
+		Return
+	EndIf
+	If vBOB_HeadScaleMult
+		If vBOB_HeadScaleMult.GetValue() != MaxHeadSize || MaxHeadSize * OriginalHeadScale != NetImmerse.GetNodeScale(ref = TargetActor, node = HeadNode, firstPerson = False)
+			MaxHeadSize = vBOB_HeadScaleMult.GetValue()
 			If TargetActor.Is3DLoaded()
 				ResizeMyHead(MaxHeadSize)
 				GoToState("Rescaled")
@@ -180,6 +194,9 @@ Function DoRescaling(Float afTargetScale)
 		TargetActor.RemoveSpell(vBOB_BobbleFXSpell)
 		Return
 	EndIf
+	If afTargetScale > vBOB_HeadScaleMax.GetValue()
+		afTargetScale = vBOB_HeadScaleMax.GetValue()
+	EndIf
 	Float fCurrentHeadScale = NetImmerse.GetNodeScale(ref = TargetActor, node = HeadNode, firstPerson = False)
 	If !fCurrentHeadScale || fCurrentHeadScale == afTargetScale
 		Return
@@ -200,7 +217,7 @@ Function DoRescaling(Float afTargetScale)
 	EndIf
 	Int iStep = 0
 	;Debug.Trace("vBOB/" + TargetActor.GetActorBase().GetName() + ": Head node starting at " + fCurrentHeadScale)
-	If PlayerREF.HasLOS(TargetActor)
+	If PlayerREF.HasLOS(TargetActor) && vBOB_UseSmoothScaling.GetValue()
 		;Debug.Trace("vBOB/" + TargetActor.GetActorBase().GetName() + ": Player can see me, using smooth scaling...")
 		Int iSoundID = 0
 		If !(TargetActor == PlayerREF && GetCameraState() == 0) ; Don't play in first-person, it's really loud

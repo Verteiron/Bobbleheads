@@ -1,5 +1,5 @@
-Scriptname vBOB__MetaQuestScript extends Quest  
-{Do initialization and track variables for scripts.}
+Scriptname vBOB_ActorPollingScript extends Quest  
+{Start/stop ApplyBobbleheadSpellQuest.}
 
 ;=== Imports ===--
 
@@ -21,9 +21,7 @@ Int Property ModVersionPatch Auto Hidden
 
 String Property ModName = "Bobblehead" Auto Hidden
 
-;=== Properties ===--
-
-Quest Property vBOB_ActorPollingQuest Auto
+Quest Property vBOB_ApplyBobbleheadSpellQuest Auto
 
 ;Message Property vMYC_ModLoadedMSG Auto
 ;Message Property vMYC_ModUpdatedMSG Auto
@@ -35,16 +33,24 @@ Quest Property vBOB_ActorPollingQuest Auto
 
 Event OnInit()
 	;If IsRunning()
+		vBOB_ApplyBobbleheadSpellQuest.Start()
 		RegisterForSingleUpdate(5)
 	;EndIf
 EndEvent
 
 Event OnUpdate()
-	;While vBOB_ApplyBobbleheadSpell.IsRunning()
-	;	vBOB_ApplyBobbleheadSpell.Stop()
+	;While vBOB_ApplyBobbleheadSpellQuest.IsRunning()
+	;	vBOB_ApplyBobbleheadSpellQuest.Stop()
 	;	Wait(0.1)
 	;EndWhile
-	If !vBOB_ActorPollingQuest.IsRunning()
-		vBOB_ActorPollingQuest.Start()
-	EndIf
+	vBOB_ApplyBobbleheadSpellQuest.Stop()
+	vBOB_ApplyBobbleheadSpellQuest.Start()
+	Wait(0.33)
+
+	While vBOB_ApplyBobbleheadSpellQuest.IsRunning()   ; .GetAliasByName("BobbleTarget")
+		vBOB_ApplyBobbleheadSpellQuest.Stop()
+		vBOB_ApplyBobbleheadSpellQuest.Start()
+		Wait(0.33)
+	EndWhile
+	RegisterForSingleUpdate(5)
 EndEvent
