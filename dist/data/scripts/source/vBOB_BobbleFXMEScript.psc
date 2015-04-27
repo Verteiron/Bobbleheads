@@ -40,6 +40,7 @@ Actor 			Property TargetActor 			Auto Hidden
 String 			Property HeadNode 				Auto Hidden
 
 Bool 			Property LostMyHead				Auto Hidden
+Bool 			Property HitByArrow				Auto Hidden
 
 ;=== Events ===--
 
@@ -81,6 +82,14 @@ EndEvent
 Event OnAnimationEvent(ObjectReference akSource, string asEventName)
 	If asEventName == "Decapitate"
 		LostMyHead = True
+	EndIf
+EndEvent
+
+Event OnHit(ObjectReference akAggressor, Form akSource, Projectile akProjectile, bool abPowerAttack, bool abSneakAttack, bool abBashAttack, bool abHitBlocked)
+	If akProjectile
+		HitByArrow = True
+	Else
+		HitByArrow = False
 	EndIf
 EndEvent
 

@@ -135,7 +135,7 @@ Event OnPageReset(string a_page)
 	AddEmptyOption()
 	AddHeaderOption("$Extras")
 	OPTION_TOGGLE_DEFLATEONDEATH 	= AddToggleOption("$Deflate on death", bTOGGLE_DEFLATEONDEATH, iOptionFlags)
-	OPTION_TOGGLE_POPWITHARROW 		= AddToggleOption("$Pop with arrow", bTOGGLE_POPWITHARROW, iOptionFlags)
+	;OPTION_TOGGLE_POPWITHARROW 		= AddToggleOption("$Pop with arrow", bTOGGLE_POPWITHARROW, iOptionFlags)
 	SetCursorPosition(1)
 	AddHeaderOption("$Size options")
 	OPTION_SLIDER_HEADSCALEMULT 	= AddSliderOption("$Head scale mult", fSLIDER_HEADSCALEMULT, "{1}", iOptionFlags)
@@ -205,10 +205,28 @@ Event OnOptionSliderAccept(int a_option, float a_value)
 EndEvent
 
 Event OnOptionHighlight(Int option)
-
 	If option == OPTION_TOGGLE_MASTER
 		SetInfoText("$OPTION_TOGGLE_MASTER_HELP")
+	ElseIf Option == OPTION_TOGGLE_PLAYER
+		SetInfoText("$OPTION_TOGGLE_PLAYER_HELP")
+	ElseIf Option == OPTION_TOGGLE_FRIENDS
+		SetInfoText("$OPTION_TOGGLE_FRIENDS_HELP")
+	ElseIf Option == OPTION_TOGGLE_FOES
+		SetInfoText("$OPTION_TOGGLE_FOES_HELP")
+	ElseIf Option == OPTION_TOGGLE_NONHUMAN
+		SetInfoText("$OPTION_TOGGLE_NONHUMAN_HELP")
+	ElseIf Option == OPTION_TOGGLE_DEFLATEONDEATH
+		SetInfoText("$OPTION_TOGGLE_DEFLATEONDEATH_HELP")
+	ElseIf Option == OPTION_TOGGLE_POPWITHARROW
+		SetInfoText("$OPTION_TOGGLE_POPWITHARROW_HELP")
+	ElseIf Option == OPTION_SLIDER_HEADSCALEMULT
+		SetInfoText("$OPTION_SLIDER_HEADSCALEMULT_HELP")
+	ElseIf Option == OPTION_SLIDER_HEADSCALEMAX
+		SetInfoText("$OPTION_SLIDER_HEADSCALEMAX_HELP")
+	Else
+		SetInfoText("$OPTION_UNKNOWN_HELP")
 	EndIf
+
 EndEvent
 
 String Function GetFormIDString(Form kForm)

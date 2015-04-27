@@ -12,9 +12,12 @@ Actor 			Property PlayerRef 						Auto
 
 Quest 			Property vBOB_ApplyBobbleheadSpellQuest Auto
 
+Spell			Property vBOB_BobbleFXSpell				Auto
+
 ;=== Config variables ===--
 
 GlobalVariable 	Property vBOB_MasterEnable				Auto
+GlobalVariable 	Property vBOB_AffectPlayer				Auto
 
 ;=== Variables ===--
 
@@ -41,6 +44,15 @@ Event OnUpdate()
 		Return
 	EndIf
 
+	If vBOB_AffectPlayer.GetValue()
+		If !PlayerREF.HasSpell(vBOB_BobbleFXSpell)
+			PlayerREF.AddSpell(vBOB_BobbleFXSpell,False)
+		EndIf
+	Else
+		If PlayerREF.HasSpell(vBOB_BobbleFXSpell)
+			PlayerREF.RemoveSpell(vBOB_BobbleFXSpell)
+		EndIf
+	EndIf			
 	vBOB_ApplyBobbleheadSpellQuest.Stop()
 	vBOB_ApplyBobbleheadSpellQuest.Start()
 	Wait(0.5)
