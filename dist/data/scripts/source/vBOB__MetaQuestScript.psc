@@ -13,11 +13,6 @@ Actor 	Property PlayerRef 							Auto
 Quest 	Property vBOB_ActorPollingQuest 			Auto
 Quest 	Property vBOB_ApplyBobbleheadSpellQuest 	Auto
 
-Message Property vBOB_ModLoadedMSG 					Auto
-Message Property vBOB_ModUpdatedMSG 				Auto
-Message Property vBOB_ModShutdownMSG 				Auto
-
-
 Bool 	Property Ready 				= False			Auto Hidden
 Float 	Property ModVersion 						Auto Hidden
 Int 	Property ModVersionInt 						Auto Hidden
@@ -32,6 +27,10 @@ String 	Property ModName 			= "Bobblehead"	Auto Hidden
 
 ;=== Variables ===--
 
+Float _CurrentVersion
+Int _iCurrentVersion
+String _sCurrentVersion
+
 ;=== Events ===--
 
 Event OnInit()
@@ -45,26 +44,94 @@ Event OnUpdate()
 EndEvent
 
 Function DoStartup()
-	Debug.Trace("vBOB/MetaQuest: Starting up!")
+	DebugTrace("Starting up!")
 	If !vBOB_ActorPollingQuest.IsRunning()
-		Debug.Trace("vBOB/MetaQuest: Starting vBOB_ActorPollingQuest!")
+		DebugTrace("Starting up!")
+		DebugTrace("Starting vBOB_ActorPollingQuest!")
 		vBOB_ActorPollingQuest.Start()
 	EndIf
+	ModVersion = _iCurrentVersion
 EndFunction
 
-Function DoUpkeep(Bool abBackground = True)
+Function DoUpkeep(Bool DelayedStart = True)
+	DebugTrace("Doing upkeep!")
+
+	;FIXME: CHANGE THIS WHEN UPDATING!
+	ModVersionMajor = 1
+	ModVersionMinor = 0
+	ModVersionPatch = 0
+	_iCurrentVersion = GetVersionInt(ModVersionMajor,ModVersionMinor,ModVersionPatch)
+	_sCurrentVersion = GetVersionString(_iCurrentVersion)
+	String sModVersion = GetVersionString(ModVersion as Int)
+	Ready = False
+	If DelayedStart
+		Wait(RandomFloat(3,5))
+	EndIf
 	
+	String sErrorMessage
+	DebugTrace("" + ModName)
+	DebugTrace("Performing upkeep...")
+	DebugTrace("Loaded version is " + sModVersion + ", Current version is " + _sCurrentVersion)
+	If ModVersion == 0
+		DebugTrace("Newly installed, doing initialization...")
+		DoStartup()
+		If ModVersion == _iCurrentVersion
+			DebugTrace("Initialization succeeded.")
+		Else
+			DebugTrace("WARNING! Initialization had a problem!")
+		EndIf
+	ElseIf ModVersion < _iCurrentVersion
+		DebugTrace("Installed version is older. Starting the upgrade...")
+		DoUpgrade()
+		If ModVersion != _iCurrentVersion
+			DebugTrace("WARNING! Upgrade failed!")
+			Debug.MessageBox("WARNING! " + ModName + " upgrade failed for some reason. You should report this to the mod author.")
+		EndIf
+		DebugTrace("Upgraded to " + GetVersionString(_iCurrentVersion))
+	Else
+		DebugTrace("Loaded, no updates.")
+	EndIf
+	DebugTrace("Upkeep complete!")
+	Ready = True
+EndFunction
+
+Function DoUpgrade()
+	;Nothing here, yet!
 EndFunction
 
 Function DoShutdown()
-	Debug.Trace("vBOB/MetaQuest: Shutting down!")
+	DebugTrace("Shutting down!")
 	If vBOB_ActorPollingQuest.IsRunning()
-		Debug.Trace("vBOB/MetaQuest: Stopping vBOB_ActorPollingQuest!")
+		DebugTrace("Stopping vBOB_ActorPollingQuest!")
 		vBOB_ActorPollingQuest.Stop()
 	EndIf
 	If vBOB_ApplyBobbleheadSpellQuest.IsRunning()
-		Debug.Trace("vBOB/MetaQuest: Stopping vBOB_ApplyBobbleheadSpellQuest!")
+		DebugTrace("Stopping vBOB_ApplyBobbleheadSpellQuest!")
 		vBOB_ApplyBobbleheadSpellQuest.Stop()
 	EndIf
 
+EndFunction
+
+Int Function GetVersionInt(Int iMajor, Int iMinor, Int iPatch)
+	Return Math.LeftShift(iMajor,16) + Math.LeftShift(iMinor,8) + iPatch
+EndFunction
+
+String Function GetVersionString(Int iVersion)
+	Int iMajor = Math.RightShift(iVersion,16)
+	Int iMinor = Math.LogicalAnd(Math.RightShift(iVersion,8),0xff)
+	Int iPatch = Math.LogicalAnd(iVersion,0xff)
+	String sMajorZero
+	String sMinorZero
+	String sPatchZero
+	If !iMajor
+		sMajorZero = "0"
+	EndIf
+	If !iMinor
+		sMinorZero = "0"
+	EndIf
+	Return sMajorZero + iMajor + "." + sMinorZero + iMinor + "." + sPatchZero + iPatch
+EndFunction
+
+Function DebugTrace(String sDebugString, Int iSeverity = 0)
+	Debug.Trace("vBOB/MetaQuest: " + sDebugString,iSeverity)
 EndFunction
