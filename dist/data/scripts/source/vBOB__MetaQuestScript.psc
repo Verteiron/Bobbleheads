@@ -1,6 +1,10 @@
 Scriptname vBOB__MetaQuestScript extends Quest  
 {Do initialization and track variables for scripts.}
 
+; === [ vBOB__MetaQuestScript.psc ] =======================================---
+; Quest that tracks, stops, starts other quests.
+; ========================================================---
+
 ;=== Imports ===--
 
 Import Utility
@@ -34,13 +38,13 @@ String _sCurrentVersion
 ;=== Events ===--
 
 Event OnInit()
-	;If IsRunning()
+	If IsRunning()
 		RegisterForSingleUpdate(1)
-	;EndIf
+	EndIf
 EndEvent
 
 Event OnUpdate()
-	DoStartup()
+	DoUpkeep()
 EndEvent
 
 Function DoStartup()
@@ -67,11 +71,14 @@ Function DoUpkeep(Bool DelayedStart = True)
 	If DelayedStart
 		Wait(RandomFloat(3,5))
 	EndIf
-	
 	String sErrorMessage
 	DebugTrace("" + ModName)
 	DebugTrace("Performing upkeep...")
 	DebugTrace("Loaded version is " + sModVersion + ", Current version is " + _sCurrentVersion)
+	If !CheckDependencies()
+		DebugTrace("Failed dependency check, aborting!")
+		Return
+	EndIf
 	If ModVersion == 0
 		DebugTrace("Newly installed, doing initialization...")
 		DoStartup()
@@ -109,7 +116,18 @@ Function DoShutdown()
 		DebugTrace("Stopping vBOB_ApplyBobbleheadSpellQuest!")
 		vBOB_ApplyBobbleheadSpellQuest.Stop()
 	EndIf
+EndFunction
 
+Bool Function CheckDependencies()
+	Float fSKSE = SKSE.GetVersion() + SKSE.GetVersionMinor() * 0.01 + SKSE.GetVersionBeta() * 0.0001
+	DebugTrace("SKSE is version " + fSKSE)
+	If fSKSE < 1.07
+		Debug.MessageBox("Bobbleheads\nThis mod requires SKSE 1.7 or higher, but it seems to be missing or out of date.\nIt is very unlikely the mod will work properly!")
+		Return False
+	Else
+		;Proceed
+	EndIf
+	Return True
 EndFunction
 
 Int Function GetVersionInt(Int iMajor, Int iMinor, Int iPatch)

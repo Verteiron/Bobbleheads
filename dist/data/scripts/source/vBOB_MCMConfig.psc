@@ -1,6 +1,10 @@
 Scriptname vBOB_MCMConfig extends SKI_ConfigBase  
 {MCM and config variable storage script.}
 
+; === [ vBOB_MCMConfig.psc ] ==============================================---
+; MCM and config variable storage script.
+; ========================================================---
+
 Import Game
 Import Utility
 
@@ -142,7 +146,7 @@ Event OnPageReset(string a_page)
 	OPTION_SLIDER_HEADSCALEMULT 	= AddSliderOption("$Head scale mult", fSLIDER_HEADSCALEMULT, "{1}", iOptionFlags)
 	OPTION_SLIDER_HEADSCALEMAX 		= AddSliderOption("$Head scale max", fSLIDER_HEADSCALEMAX, "{0}", iOptionFlags)
 	SetCursorPosition(23)
-	AddTextOption("", "Bobbleheads by Verteiron - 1.0", OPTION_FLAG_DISABLED)
+	AddTextOption("", "Bobbleheads 1.0 by Verteiron", OPTION_FLAG_DISABLED)
 EndEvent
 
 Event OnOptionSelect(Int Option)
@@ -191,7 +195,7 @@ Event OnOptionSliderOpen(int a_option)
 		SetSliderDialogStartValue(fSLIDER_HEADSCALEMULT)
 		SetSliderDialogDefaultValue(1.8)
 		SetSliderDialogInterval(0.1)
-		SetSliderDialogRange(0.0,30.0)
+		SetSliderDialogRange(0.0,fSLIDER_HEADSCALEMAX)
 	ElseIf a_option == OPTION_SLIDER_HEADSCALEMAX
 		SetSliderDialogStartValue(fSLIDER_HEADSCALEMAX)
 		SetSliderDialogDefaultValue(30.0)
@@ -234,7 +238,6 @@ Event OnOptionHighlight(Int option)
 	Else
 		SetInfoText("$OPTION_UNKNOWN_HELP")
 	EndIf
-
 EndEvent
 
 String Function GetFormIDString(Form kForm)

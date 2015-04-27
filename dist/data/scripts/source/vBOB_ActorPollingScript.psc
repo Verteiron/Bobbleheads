@@ -1,6 +1,11 @@
 Scriptname vBOB_ActorPollingScript extends Quest  
 {Start/stop ApplyBobbleheadSpellQuest.}
 
+; === [ vBOB_ActorPollingScript.psc ] =====================================---
+; Start/stop ApplyBobbleheadSpellQuest in order to poll for NPCs needing
+; the spell.
+; ========================================================---
+
 ;=== Imports ===--
 
 Import Utility
@@ -24,11 +29,11 @@ GlobalVariable 	Property vBOB_AffectPlayer				Auto
 ;=== Events ===--
 
 Event OnInit()
-	;If IsRunning()
+	If IsRunning()
 		Debug.Trace("vBOB/ActorPollingScript: Starting up!")
 		vBOB_ApplyBobbleheadSpellQuest.Start()
 		RegisterForSingleUpdate(5)
-	;EndIf
+	EndIf
 EndEvent
 
 Event OnUpdate()

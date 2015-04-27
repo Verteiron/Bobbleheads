@@ -3,6 +3,7 @@ Scriptname vBOB_BobbleFXMEScript extends ActiveMagicEffect
 
 ; === [ vBOB_BobbleFXMEScript.psc ] =======================================---
 ; Apply the bobblehead effect to the target if it has a suitable head.
+; Track some config changes, too.
 ; ========================================================---
 
 Import Game
