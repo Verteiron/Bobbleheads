@@ -135,12 +135,14 @@ Event OnPageReset(string a_page)
 	AddEmptyOption()
 	AddHeaderOption("$Extras")
 	OPTION_TOGGLE_DEFLATEONDEATH 	= AddToggleOption("$Deflate on death", bTOGGLE_DEFLATEONDEATH, iOptionFlags)
+	OPTION_TOGGLE_SMOOTHSCALING 	= AddToggleOption("$Use Smooth scaling", bTOGGLE_SMOOTHSCALING, iOptionFlags)
 	;OPTION_TOGGLE_POPWITHARROW 		= AddToggleOption("$Pop with arrow", bTOGGLE_POPWITHARROW, iOptionFlags)
 	SetCursorPosition(1)
 	AddHeaderOption("$Size options")
 	OPTION_SLIDER_HEADSCALEMULT 	= AddSliderOption("$Head scale mult", fSLIDER_HEADSCALEMULT, "{1}", iOptionFlags)
 	OPTION_SLIDER_HEADSCALEMAX 		= AddSliderOption("$Head scale max", fSLIDER_HEADSCALEMAX, "{0}", iOptionFlags)
-	
+	SetCursorPosition(23)
+	AddTextOption("", "Bobbleheads by Verteiron - 1.0", OPTION_FLAG_DISABLED)
 EndEvent
 
 Event OnOptionSelect(Int Option)
@@ -155,6 +157,7 @@ Event OnOptionSelect(Int Option)
 		SetOptionFlags(OPTION_TOGGLE_FOES, iOptionFlags, True)
 		SetOptionFlags(OPTION_TOGGLE_NONHUMAN, iOptionFlags, True)
 		SetOptionFlags(OPTION_TOGGLE_DEFLATEONDEATH, iOptionFlags, True)
+		SetOptionFlags(OPTION_TOGGLE_SMOOTHSCALING, iOptionFlags, True)
 		SetOptionFlags(OPTION_TOGGLE_POPWITHARROW, iOptionFlags, True)
 		SetOptionFlags(OPTION_SLIDER_HEADSCALEMULT, iOptionFlags, True)
 		SetOptionFlags(OPTION_SLIDER_HEADSCALEMAX, iOptionFlags, True)
@@ -174,6 +177,9 @@ Event OnOptionSelect(Int Option)
 	ElseIf Option == OPTION_TOGGLE_DEFLATEONDEATH
 		bTOGGLE_DEFLATEONDEATH = !bTOGGLE_DEFLATEONDEATH
 		SetToggleOptionValue(Option,bTOGGLE_DEFLATEONDEATH)
+	ElseIf Option == OPTION_TOGGLE_SMOOTHSCALING
+		bTOGGLE_SMOOTHSCALING = !bTOGGLE_SMOOTHSCALING
+		SetToggleOptionValue(Option,bTOGGLE_SMOOTHSCALING)
 	ElseIf Option == OPTION_TOGGLE_POPWITHARROW
 		bTOGGLE_POPWITHARROW = !bTOGGLE_POPWITHARROW
 		SetToggleOptionValue(Option,bTOGGLE_POPWITHARROW)
@@ -217,6 +223,8 @@ Event OnOptionHighlight(Int option)
 		SetInfoText("$OPTION_TOGGLE_NONHUMAN_HELP")
 	ElseIf Option == OPTION_TOGGLE_DEFLATEONDEATH
 		SetInfoText("$OPTION_TOGGLE_DEFLATEONDEATH_HELP")
+	ElseIf Option == OPTION_TOGGLE_SMOOTHSCALING
+		SetInfoText("$OPTION_TOGGLE_SMOOTHSCALING_HELP")
 	ElseIf Option == OPTION_TOGGLE_POPWITHARROW
 		SetInfoText("$OPTION_TOGGLE_POPWITHARROW_HELP")
 	ElseIf Option == OPTION_SLIDER_HEADSCALEMULT
