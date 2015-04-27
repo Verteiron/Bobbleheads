@@ -41,9 +41,9 @@ Event OnUpdate()
 	;	vBOB_ApplyBobbleheadSpellQuest.Stop()
 	;	Wait(0.1)
 	;EndWhile
-	Debug.Trace("vBOB/ActorPollingScript: Checking for new targets...")
+	;Debug.Trace("vBOB/ActorPollingScript: Checking for new targets...")
 	If !vBOB_MasterEnable.GetValue()
-		Debug.Trace("vBOB/ActorPollingScript: MasterEnable is off, shutting down!")
+		;Debug.Trace("vBOB/ActorPollingScript: MasterEnable is off, shutting down!")
 		vBOB_ApplyBobbleheadSpellQuest.Stop()
 		Stop()
 		Return

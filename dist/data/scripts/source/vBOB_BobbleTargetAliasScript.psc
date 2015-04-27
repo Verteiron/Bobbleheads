@@ -21,7 +21,7 @@ Spell 				Property 	vBOB_BobbleFXSpell	Auto
 
 Event OnInit()
 	If GetReference() as Actor
-		Debug.Trace("vBOB: Adding BobbleFX spell to " + (GetReference() as Actor).GetActorBase().GetName())
+		;Debug.Trace("vBOB: Adding BobbleFX spell to " + (GetReference() as Actor).GetActorBase().GetName())
 		(GetReference() as Actor).AddSpell(vBOB_BobbleFXSpell,False)
 	EndIf
 EndEvent

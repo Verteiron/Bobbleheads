@@ -25,7 +25,7 @@ Int 	Property ModVersionMajor 					Auto Hidden
 Int 	Property ModVersionMinor 					Auto Hidden
 Int 	Property ModVersionPatch 					Auto Hidden
 
-String 	Property ModName 			= "Bobblehead"	Auto Hidden
+String 	Property ModName 			= "Bobbleheads"	Auto Hidden
 
 ;=== Config variables ===--
 
@@ -44,7 +44,7 @@ Event OnInit()
 EndEvent
 
 Event OnUpdate()
-	DoUpkeep()
+	DoUpkeep(False)
 EndEvent
 
 Function DoStartup()

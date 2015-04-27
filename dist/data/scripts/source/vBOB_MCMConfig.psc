@@ -239,23 +239,3 @@ Event OnOptionHighlight(Int option)
 		SetInfoText("$OPTION_UNKNOWN_HELP")
 	EndIf
 EndEvent
-
-String Function GetFormIDString(Form kForm)
-	String sResult
-	sResult = kForm as String ; [FormName < (FF000000)>]
-	sResult = StringUtil.SubString(sResult,StringUtil.Find(sResult,"(") + 1,8)
-	Return sResult
-EndFunction
-
-String Function GetPrettyTime(String asTimeInMinutes)
-	Float fTimeInMinutes = asTimeInMinutes as Float
-	Int iMinutes = Math.Floor(fTimeInMinutes)
-	Int iSeconds = Math.Floor((fTimeInMinutes - iMinutes) * 60)
-	String sZero = ""
-	If iSeconds < 10
-		sZero = "0"
-	EndIf
-	String sPrettyTime = iMinutes + ":" + sZero + iSeconds
-	Return sPrettyTime
-EndFunction
-
